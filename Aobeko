@@ -1,0 +1,45 @@
+DISTANCE=`python motion_sensor.py|awk '{print $2}'`
+#DISTANCE=63
+
+gpio -g write 17 0
+gpio -g write 10 0
+
+capture test.jpg >/dev/null 2?dev/null
+IMAGE=`java image`
+
+RED_POS=`echo $IMAGE|awk '{print $1}'`
+PIXELS=`echo $IMAGE|awk '{print $2}'`
+
+echo $RED_POS'/'$PIXELS  $DISTANCE"cm"
+
+gpio -g mode 17 out
+gpio -g mode 10 out 
+
+gpio -g mode 4 out
+gpio -g mode 25 out
+
+if [ $DISTANCE -lt 20 ] ;then
+	./stop
+else
+	gpio -g write 17 1
+	gpio -g write 10 1
+
+	if [ $RED_POS -lt 100 ] ;then
+		gpio -g write 4 1
+		gpio -g write 25 1
+		sleep 0.4 #* (120 - $RED_POS)/100
+	else
+		if [ $RED_POS -gt 245 ] ;then
+			gpio -g write 4	0
+			gpio -g write 25 0
+			sleep 0.5 #* ($RED_POS - 225)/100
+		else
+			#center
+			gpio -g write 4 1   #1 
+			gpio -g write 25 0   #0
+			sleep 2
+		fi
+	fi
+fi
+
+

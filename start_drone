@@ -1,0 +1,2 @@
+service apache2 restart
+while(true); do record rec.wav 10; mv rec.wav test.wav; done

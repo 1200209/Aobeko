@@ -1,0 +1,6 @@
+gpio -g mode 10 out
+gpio -g mode 17 out
+
+gpio -g write 10 0
+gpio -g write 17 0
+
